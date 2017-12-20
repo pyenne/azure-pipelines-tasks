@@ -127,12 +127,7 @@
             "label": "Release Notes",
             "required": true,
             "helpMarkDown": "Release notes for this version.",
-            "visibleRule": "releaseNotesSelection = input",
-            "properties": {
-                "resizable": "true",
-                "rows": "10",
-                "maxLength": "5000"	
-            }
+            "visibleRule": "releaseNotesSelection = input"
         },
         {
             "name": "releaseNotesFile",
