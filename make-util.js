@@ -939,6 +939,19 @@ var getTaskJsonSchema = function(taskJson) {
             description: description
         };
 
+        if ((input.type == 'pickList' || input.type == 'radio') && input.options) {
+            schema.properties.inputs[name]['enum'] = Object.keys(input.options);
+        }
+        else if (input.type == 'boolean') {
+            schema.properties.inputs[name].type = 'boolean';
+        }
+        else if (input.type == 'multiLine' || input.type == 'string' || input.type == 'filePath') {
+            schema.properties.inputs[name].type = 'string';
+        }
+        else if (input.type.startsWith('connectedService')) {
+            schema.properties.inputs[name].type = 'string';
+        }
+
         let inputReallyRequired =
                input.required   // schema says it's required
             && input.required !== "false" // and it's not false-y
