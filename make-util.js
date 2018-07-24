@@ -815,6 +815,20 @@ var createMarkdownDocFile = function(taskJson, taskJsonPath, docsDir, mdDocOutpu
 }
 exports.createMarkdownDocFile = createMarkdownDocFile;
 
+//------------------------------------------------------------------------------
+// Generate JSON Schema
+//------------------------------------------------------------------------------
+
+var createJsonSchemaFile = function(taskJson, taskJsonPath, docsDir, outputFilename) {
+    var outFilePath = path.join(docsDir, taskJson.category.toLowerCase(), outputFilename);
+    if (!test('-e', path.dirname(outFilePath))) {
+        fs.mkdirSync(path.dirname(outFilePath));
+    }
+
+    fs.writeFileSync(outFilePath, getTaskJsonSchema(taskJson));
+}
+exports.createJsonSchemaFile = createJsonSchemaFile;
+
 // Returns a copy of the specified string with its first letter as a lowercase letter.
 // Example: 'NachoLibre' -> 'nachoLibre'
 function camelize(str) {
@@ -903,6 +917,45 @@ var getTaskMarkdownDoc = function(taskJson, mdDocOutputFilename) {
     taskMarkdown += '<!-- ENDSECTION -->' + os.EOL;
 
     return taskMarkdown;
+}
+
+var getTaskJsonSchema = function(taskJson) {
+    var schema = {
+        properties: {
+            task: {},
+            inputs: {}
+        }
+    };
+
+    schema.properties.task.pattern = '^' + taskJson.name + '@' + taskJson.version.Major.toString() + '$';
+    schema.properties.task.description = cleanString(taskJson.friendlyName) + '\n\n' + cleanString(taskJson.description);
+
+    let requiredArgs = [];
+    taskJson.inputs.forEach(function(input) {
+        let name = cleanString(input.name);
+        let description = input.label;
+
+        schema.properties.inputs[name] = {
+            description: description
+        };
+
+        let inputReallyRequired =
+               input.required   // schema says it's required
+            && input.required !== "false" // and it's not false-y
+            && !(input.defaultValue && input.defaultValue.length > 0)  // and there's no default value
+            && (!input.visibleRule || input.visibleRule.length == 0) // and it's unconditionally displayed in the UI
+        ;
+
+        if (inputReallyRequired) {
+            requiredArgs.push(name);
+        }
+    });
+
+    if (requiredArgs.length > 0) {
+        schema.required = requiredArgs;
+    }
+
+    return JSON.stringify(schema, null, 2);
 }
 
 var getTaskYaml = function(taskJson) {

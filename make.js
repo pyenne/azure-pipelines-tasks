@@ -50,6 +50,7 @@ var validateTask = util.validateTask;
 var fileToJson = util.fileToJson;
 var createYamlSnippetFile = util.createYamlSnippetFile;
 var createMarkdownDocFile = util.createMarkdownDocFile;
+var createJsonSchemaFile = util.createJsonSchemaFile;
 
 // global paths
 var buildPath = path.join(__dirname, '_build', 'Tasks');
@@ -135,6 +136,38 @@ target.gendocs = function() {
     });
 
     banner('Generating docs successful', true);
+}
+
+//
+// Generate JSON Schema
+// ex: node make.js genschema
+// ex: node make.js genschema --task ShellScriptV2
+//
+target.genschema = function() {
+
+    var schemaDir = path.join(__dirname, '_genschema');
+    rm('-Rf', schemaDir);
+    mkdir('-p', schemaDir);
+    console.log();
+    console.log('> generating schema');
+
+    taskList.forEach(function(taskName) {
+        var taskPath = path.join(__dirname, 'Tasks', taskName);
+        ensureExists(taskPath);
+
+        // load the task.json
+        var taskJsonPath = path.join(taskPath, 'task.json');
+        if (test('-f', taskJsonPath)) {
+            var taskDef = fileToJson(taskJsonPath);
+            validateTask(taskDef);
+
+            // create JSON Schema file
+            var jsonSchemaOutputFilename = taskName + '.schema.json';
+            createJsonSchemaFile(taskDef, taskJsonPath, schemaDir, jsonSchemaOutputFilename);
+        }
+    });
+
+    banner('Generating schema successful', true);
 }
 
 //
