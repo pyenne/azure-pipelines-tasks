@@ -920,6 +920,14 @@ var getTaskMarkdownDoc = function(taskJson, mdDocOutputFilename) {
     return taskMarkdown;
 }
 
+var makeCaseInsensitiveRegexFromTaskName = function(taskName) {
+    let response = "";
+    for (var c of taskName) {
+        response += "[" + c.toLowerCase() + c.toUpperCase() + "]";
+    }
+    return response;
+};
+
 var getTaskJsonSchema = function(taskJson) {
     var schema = {
         properties: {
@@ -930,7 +938,7 @@ var getTaskJsonSchema = function(taskJson) {
         }
     };
 
-    schema.properties.task.pattern = '^' + taskJson.name + '@' + taskJson.version.Major.toString() + '$';
+    schema.properties.task.pattern = '^' + makeCaseInsensitiveRegexFromTaskName(taskJson.name) + '@' + taskJson.version.Major.toString() + '$';
     schema.properties.task.description = cleanString(taskJson.friendlyName) + '\n\n' + cleanString(taskJson.description);
     schema.properties.inputs.description = cleanString(taskJson.friendlyName) + " inputs";
 
