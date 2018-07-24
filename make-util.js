@@ -820,12 +820,13 @@ exports.createMarkdownDocFile = createMarkdownDocFile;
 //------------------------------------------------------------------------------
 
 var createJsonSchemaFile = function(taskJson, taskJsonPath, docsDir, outputFilename) {
-    var outFilePath = path.join(docsDir, taskJson.category.toLowerCase(), outputFilename);
+    var outFilePath = path.join(docsDir, "_" + taskJson.category.toLowerCase(), outputFilename);
     if (!test('-e', path.dirname(outFilePath))) {
         fs.mkdirSync(path.dirname(outFilePath));
     }
 
     fs.writeFileSync(outFilePath, getTaskJsonSchema(taskJson));
+    return outFilePath;
 }
 exports.createJsonSchemaFile = createJsonSchemaFile;
 

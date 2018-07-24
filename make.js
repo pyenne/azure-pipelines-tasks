@@ -149,7 +149,9 @@ target.genschema = function() {
     rm('-Rf', schemaDir);
     mkdir('-p', schemaDir);
     console.log();
-    console.log('> generating schema');
+    console.log('> generating schema fragments');
+
+    let fragments = [];
 
     taskList.forEach(function(taskName) {
         var taskPath = path.join(__dirname, 'Tasks', taskName);
@@ -163,11 +165,78 @@ target.genschema = function() {
 
             // create JSON Schema file
             var jsonSchemaOutputFilename = taskName + '.schema.json';
-            createJsonSchemaFile(taskDef, taskJsonPath, schemaDir, jsonSchemaOutputFilename);
+            var outFileName = createJsonSchemaFile(taskDef, taskJsonPath, schemaDir, jsonSchemaOutputFilename);
+
+            fragments.push(outFileName);
         }
     });
 
-    banner('Generating schema successful', true);
+    banner('Generating schema fragments successful', true);
+
+    let anyOf = [];
+    fragments.forEach(inFileName => {
+        anyOf.push(JSON.parse(fs.readFileSync(inFileName, 'utf8')));
+    });
+
+    let fullSchema = {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$id": "https://github.com/Microsoft/vsts-agent/blob/master/src/Misc/task-schema.json",
+        "$comment": "generated " + new Intl.DateTimeFormat('en-US', {year: 'numeric', month: '2-digit', day: '2-digit'}).format(new Date()),
+        "title": "Pipeline task schema",
+        "description": "A task definition",
+        "type": "object",
+        "required": [ "task" ],
+        "anyOf": anyOf,
+        "properties": {
+            "task": {
+              "type": "string",
+              "description": "Task reference including major version"
+            },
+            "displayName": {
+              "type": "string",
+              "description": "Human-readable name for the task"
+            },
+            "name": {
+              "type": "string",
+              "description": "ID of the task instance",
+              "pattern": "^[_A-Za-z0-9]*$"
+            },
+            "condition": {
+              "type": "string",
+              "description": "Evaluate this condition expression to determine whether to run this task"
+            },
+            "continueOnError": {
+              "type": "boolean",
+              "description": "Continue running the parent phase even on failure?"
+            },
+            "enabled": {
+              "type": "boolean",
+              "description": "Run this task when the phase runs?"
+            },
+            "timeoutInMinutes": {
+              "type": "integer",
+              "description": "Time to wait for this task to complete before the server kills it"
+            },
+            "inputs": {
+              "type": "object",
+              "description": "Task-specific inputs"
+            },
+            "env": {
+              "type": "object",
+              "description": "Variables to map into the process's environment"
+            }
+          },
+          "additionalProperties": false
+        };
+
+    let fullSchemaFileName = path.join(schemaDir, 'task-schema.json');
+    let outStream = fs.createWriteStream(fullSchemaFileName);
+    outStream.once('open', function(fd) {
+        outStream.write(JSON.stringify(fullSchema, null, 2));
+        outStream.end();
+
+        banner('Schema stitched', true);
+    });
 }
 
 //
