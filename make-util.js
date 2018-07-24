@@ -923,34 +923,44 @@ var getTaskJsonSchema = function(taskJson) {
     var schema = {
         properties: {
             task: {},
-            inputs: {}
+            inputs: {
+                properties: {}
+            }
         }
     };
 
     schema.properties.task.pattern = '^' + taskJson.name + '@' + taskJson.version.Major.toString() + '$';
     schema.properties.task.description = cleanString(taskJson.friendlyName) + '\n\n' + cleanString(taskJson.description);
+    schema.properties.inputs.description = cleanString(taskJson.friendlyName) + " inputs";
 
     let requiredArgs = [];
     taskJson.inputs.forEach(function(input) {
+        let thisProp = {};
+
         let name = cleanString(input.name);
         let description = input.label;
 
-        schema.properties.inputs[name] = {
+        thisProp = {
             description: description
         };
 
         if ((input.type == 'pickList' || input.type == 'radio') && input.options) {
-            schema.properties.inputs[name]['enum'] = Object.keys(input.options);
+            thisProp['enum'] = Object.keys(input.options);
+        }
+        else if (input.type == 'pickList' || input.type == 'radio') {
+            thisProp.type = 'string';
         }
         else if (input.type == 'boolean') {
-            schema.properties.inputs[name].type = 'boolean';
+            thisProp.type = 'boolean';
         }
         else if (input.type == 'multiLine' || input.type == 'string' || input.type == 'filePath') {
-            schema.properties.inputs[name].type = 'string';
+            thisProp.type = 'string';
         }
         else if (input.type.startsWith('connectedService')) {
-            schema.properties.inputs[name].type = 'string';
+            thisProp.type = 'string';
         }
+
+        schema.properties.inputs.properties[name] = thisProp;
 
         let inputReallyRequired =
                input.required   // schema says it's required
@@ -965,7 +975,8 @@ var getTaskJsonSchema = function(taskJson) {
     });
 
     if (requiredArgs.length > 0) {
-        schema.required = requiredArgs;
+        schema.required = ["inputs"];
+        schema.properties.inputs.required = requiredArgs;
     }
 
     return JSON.stringify(schema, null, 2);
