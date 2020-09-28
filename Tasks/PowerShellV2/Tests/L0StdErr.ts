@@ -43,12 +43,12 @@ let a: ma.TaskLibAnswers = <ma.TaskLibAnswers>{
             "code": 0,
             "stdout": "temp/path"
         },
-        "path/to/powershell -NoLogo -NoProfile -NonInteractive -Command . 'temp\\path\\fileName.ps1'": {
+        "path/to/powershell -NoLogo -NoProfile -NonInteractive -Command & 'temp\\path\\fileName.ps1'": {
             "code": 0,
             "stdout": "",
             "stderr": "myErrorTest"
         },
-        "path/to/powershell -NoLogo -NoProfile -NonInteractive -Command . 'temp/path/fileName.ps1'": {
+        "path/to/powershell -NoLogo -NoProfile -NonInteractive -Command & 'temp/path/fileName.ps1'": {
             "code": 0,
             "stdout": "",
             "stderr": "myErrorTest"
