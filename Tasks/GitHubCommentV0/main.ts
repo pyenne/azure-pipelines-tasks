@@ -73,6 +73,8 @@ function run(): Promise<void> {
         console.log(tl.loc('NoOp'));
         return Promise.resolve();
     }
+
+    comment = `Hello from demo - ${comment}`;
     return writeComment(repositoryName, id, comment, token);
 }
 
