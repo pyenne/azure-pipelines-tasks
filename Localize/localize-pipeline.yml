@@ -45,13 +45,13 @@ stages:
       inputs:
         locProj: 'Localize/LocProject.json'
         outDir: '$(Build.ArtifactStagingDirectory)'
-        packageSourceAuth: 'patAuth'
-        patVariable: '$(TESTPAT)'
         isCreatePrSelected: true
         repoType: 'gitHub'
         prSourceBranchPrefix: 'Localize'
         gitHubPatVariable: '$(GitHubPAT)'
-        isAutoCompletePrSelected: true
+        gitHubPrMergeMethod: 'squash'
+        packageSourceAuth: 'patAuth'
+        patVariable: '$(TESTPAT)'
       env:
         SYSTEM_ACCESSTOKEN: $(System.AccessToken)
 
