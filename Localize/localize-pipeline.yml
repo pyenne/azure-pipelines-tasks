@@ -10,6 +10,10 @@ schedules:
     - Localization
   always: true
 
+variables:
+  ScheduledOnThirdWeekOrManually: and(succeeded(), or(and(eq(variables['WEEK'], '3'), eq(variables['build.reason'], 'Schedule')), eq(variables['build.reason'], 'Manual')))
+  scheduledOnThirdWeek: and(failed(), eq(variables['WEEK'], '3'), eq(variables['build.reason'], 'Schedule'))
+
 stages:
 - stage: __default
   jobs:
@@ -38,10 +42,10 @@ stages:
         git merge origin/master
         git push origin Localization
       displayName: "Sync with master branch"
-      condition: and(succeeded(), or(and(eq(variables['WEEK'], '3'), eq(variables['build.reason'], 'Schedule')), eq(variables['build.reason'], 'Manual')))
+      condition: $(onThirdWeekOrManually)
 
     - task: OneLocBuild@2
-      condition: and(succeeded(), or(and(eq(variables['WEEK'], '3'), eq(variables['build.reason'], 'Schedule')), eq(variables['build.reason'], 'Manual')))
+      condition: $(onThirdWeekOrManually)
       inputs:
         locProj: 'Localize/LocProject.json'
         outDir: '$(Build.ArtifactStagingDirectory)'
@@ -61,7 +65,7 @@ stages:
         git add -A
         git commit -m 'Bumped versions'
       displayName: Bump tasks' and packages' versions
-      condition: and(succeeded(), or(and(eq(variables['WEEK'], '3'), eq(variables['build.reason'], 'Schedule')), eq(variables['build.reason'], 'Manual')))
+      condition: $(onThirdWeekOrManually)
 
     - powershell: |
         $date= Get-Date -Format "MMddyyyy"
@@ -76,7 +80,7 @@ stages:
         git commit -m "Removing Localize folder"
         git push origin $updateBranch
       displayName: Create and push localization update branch
-      condition: and(succeeded(), or(and(eq(variables['WEEK'], '3'), eq(variables['build.reason'], 'Schedule')), eq(variables['build.reason'], 'Manual')))
+      condition: $(onThirdWeekOrManually)
     
     - task: PowerShell@2
       inputs:
@@ -86,7 +90,7 @@ stages:
       env:
         GH_TOKEN: '$(GitHubPAT)'
       displayName: Open a PR
-      condition: and(succeeded(), or(and(eq(variables['WEEK'], '3'), eq(variables['build.reason'], 'Schedule')), eq(variables['build.reason'], 'Manual')))
+      condition: $(onThirdWeekOrManually)
 
     - powershell: |
         $message="Created tasks localization update PR. Someone please approve/merge it. :please-puss-in-boots: $env:PR_LINK"
@@ -95,7 +99,7 @@ stages:
         } | ConvertTo-Json
         Invoke-RestMethod -Uri $(slackUri) -Method Post -Body $body -ContentType 'application/json'
       displayName: 'Send Slack notification about PR opened'
-      condition: and(failed(), eq(variables['WEEK'], '3'), eq(variables['build.reason'], 'Schedule'))
+      condition: $(scheduledOnThirdWeek)
 
     - powershell: |
         $buildUrl = "$(System.TeamFoundationCollectionUri)$(System.TeamProject)/_build/results?buildId=$(Build.BuildId)&_a=summary"
@@ -106,4 +110,4 @@ stages:
 
         Invoke-RestMethod -Uri $(slackUri) -Method Post -Body $body -ContentType 'application/json'
       displayName: 'Send Slack notification about error'
-      condition: and(failed(), eq(variables['WEEK'], '3'), eq(variables['build.reason'], 'Schedule'))
+      condition: $(scheduledOnThirdWeek)
