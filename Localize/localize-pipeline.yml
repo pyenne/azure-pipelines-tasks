@@ -11,7 +11,7 @@ schedules:
   always: true
 
 variables:
-  scheduledOnThirdWeekOrManually: $[or(and(eq(variables['WEEK'], '3'), eq(variables['build.reason'], 'Schedule')), eq(variables['build.reason'], 'Manual'))]
+  scheduledOnThirdWeekOrManually: $[and(eq(variables['WEEK'], '2'), eq(variables['build.reason'], 'Manual'))]
   scheduledOnThirdWeek: $[and(eq(variables['WEEK'], '3'), eq(variables['build.reason'], 'Schedule'))]
 
 stages:
