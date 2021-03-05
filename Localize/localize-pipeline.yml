@@ -42,10 +42,10 @@ stages:
         git merge origin/master
         git push origin Localization
       displayName: "Sync with master branch"
-      condition: and(succeded(), eq(variables.scheduledOnThirdWeekOrManually, true))
+      condition: and(succeeded(), eq(variables.scheduledOnThirdWeekOrManually, true))
 
     - task: OneLocBuild@2
-      condition: and(succeded(), eq(variables.scheduledOnThirdWeekOrManually, true))
+      condition: and(succeeded(), eq(variables.scheduledOnThirdWeekOrManually, true))
       inputs:
         locProj: 'Localize/LocProject.json'
         outDir: '$(Build.ArtifactStagingDirectory)'
@@ -65,7 +65,7 @@ stages:
         git add -A
         git commit -m 'Bumped versions'
       displayName: Bump tasks' and packages' versions
-      condition: and(succeded(), eq(variables.scheduledOnThirdWeekOrManually, true))
+      condition: and(succeeded(), eq(variables.scheduledOnThirdWeekOrManually, true))
 
     - powershell: |
         $date= Get-Date -Format "MMddyyyy"
@@ -80,7 +80,7 @@ stages:
         git commit -m "Removing Localize folder"
         git push origin $updateBranch
       displayName: Create and push localization update branch
-      condition: and(succeded(), eq(variables.scheduledOnThirdWeekOrManually, true))
+      condition: and(succeeded(), eq(variables.scheduledOnThirdWeekOrManually, true))
     
     - task: PowerShell@2
       inputs:
@@ -90,7 +90,7 @@ stages:
       env:
         GH_TOKEN: '$(GitHubPAT)'
       displayName: Open a PR
-      condition: and(succeded(), eq(variables.scheduledOnThirdWeekOrManually, true))
+      condition: and(succeeded(), eq(variables.scheduledOnThirdWeekOrManually, true))
 
     - powershell: |
         $message="Created tasks localization update PR. Someone please approve/merge it. :please-puss-in-boots: $env:PR_LINK"
@@ -99,7 +99,7 @@ stages:
         } | ConvertTo-Json
         Invoke-RestMethod -Uri $(slackUri) -Method Post -Body $body -ContentType 'application/json'
       displayName: 'Send Slack notification about PR opened'
-      condition: and(succeded(), eq(variables.scheduledOnThirdWeek, true))
+      condition: and(succeeded(), eq(variables.scheduledOnThirdWeek, true))
 
     - powershell: |
         $buildUrl = "$(System.TeamFoundationCollectionUri)$(System.TeamProject)/_build/results?buildId=$(Build.BuildId)&_a=summary"
