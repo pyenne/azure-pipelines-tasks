@@ -1,5 +1,5 @@
 {
-  "loc.friendlyName": "PowerShelTestPRl",
+  "loc.friendlyName": "PowerShell",
   "loc.helpMarkDown": "[Learn more about this task](https://go.microsoft.com/fwlink/?LinkID=613736)",
   "loc.description": "Run a PowerShell script on Linux, macOS, or Windows",
   "loc.instanceNameFormat": "PowerShell Script",

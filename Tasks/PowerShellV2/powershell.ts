@@ -10,7 +10,7 @@ function getActionPreference(
   defaultAction: string = "Default",
   validActions: string[] = ["Default", "Stop", "Continue", "SilentlyContinue"]
 ) {
-  let result: string = tl.getInputRequired(vstsInputName) || defaultAction;
+  let result: string = tl.getInput(vstsInputName, false) || defaultAction;
 
   if (
     validActions
@@ -66,7 +66,7 @@ async function run() {
     let input_filePath: string;
     let input_arguments: string;
     let input_script: string;
-    let input_targetType: string = tl.getInputRequired("targetType") || "";
+    let input_targetType: string = tl.getInput("targetType") || "";
     if (input_targetType.toUpperCase() == "FILEPATH") {
       input_filePath = tl.getPathInput("filePath", /*required*/ true);
       if (
@@ -76,9 +76,9 @@ async function run() {
         throw new Error(tl.loc("JS_InvalidFilePath", input_filePath));
       }
 
-      input_arguments = tl.getInputRequired("arguments") || "";
+      input_arguments = tl.getInput("arguments") || "";
     } else if (input_targetType.toUpperCase() == "INLINE") {
-      input_script = tl.getInputRequired("script") || "";
+      input_script = tl.getInput("script", false) || "";
     } else {
       throw new Error(tl.loc("JS_InvalidTargetType", input_targetType));
     }
