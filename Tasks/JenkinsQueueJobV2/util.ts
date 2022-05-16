@@ -54,7 +54,9 @@ export class HttpError extends Error {
 }
 
 export function convertJobName(jobName: string): string {
-  return "/job/" + jobName.replace("/", "/job/");
+  const search = "/";
+  const replacer = new RegExp(search, "g");
+  return "/job/" + jobName.replace(replacer, "/job/");
 }
 
 export function addUrlSegment(baseUrl: string, segment: string): string {

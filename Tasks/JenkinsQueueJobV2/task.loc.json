@@ -1,6 +1,6 @@
 {
-  "id": "c24b86d4-4256-4925-9a29-246f81aa64a8",
-  "name": "JenkinsQueueJobTest",
+  "id": "c24b86d4-4256-4925-9a29-246f81aa64a9",
+  "name": "JenkinsQueueJobTest2",
   "friendlyName": "ms-resource:loc.friendlyName",
   "description": "ms-resource:loc.description",
   "helpUrl": "https://docs.microsoft.com/azure/devops/pipelines/tasks/build/jenkins-queue-job",
@@ -15,7 +15,7 @@
   "version": {
     "Major": 2,
     "Minor": 200,
-    "Patch": 1
+    "Patch": 2
   },
   "groups": [
     {

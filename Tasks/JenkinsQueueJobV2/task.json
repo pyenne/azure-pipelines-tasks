@@ -1,7 +1,7 @@
 {
-  "id": "c24b86d4-4256-4925-9a29-246f81aa64a8",
-  "name": "JenkinsQueueJobTest",
-  "friendlyName": "Jenkins queue jobTest",
+  "id": "c24b86d4-4256-4925-9a29-246f81aa64a9",
+  "name": "JenkinsQueueJobTest2",
+  "friendlyName": "Jenkins queue jobTest2",
   "description": "Queue a job on a Jenkins server",
   "helpUrl": "https://docs.microsoft.com/azure/devops/pipelines/tasks/build/jenkins-queue-job",
   "helpMarkDown": "[Learn more about this task](http://go.microsoft.com/fwlink/?LinkId=816956). This task queues a job on a [Jenkins](https://jenkins.io/) server. Full integration capabilities require installation of the [Team Foundation Server Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Team+Foundation+Server+Plugin) on Jenkins.",
@@ -12,7 +12,7 @@
   "version": {
     "Major": 2,
     "Minor": 200,
-    "Patch": 1
+    "Patch": 2
   },
   "groups": [
     {
