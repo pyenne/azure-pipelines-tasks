@@ -10,8 +10,8 @@
     "demands": [],
     "version": {
         "Major": 0,
-        "Minor": 206,
-        "Patch": 0
+        "Minor": 209,
+        "Patch": 1
     },
     "minimumAgentVersion": "1.99.0",
     "instanceNameFormat": "Download GitHub Release",
